@@ -7,11 +7,15 @@
 //
 
 #include "ibst.hpp"
+#include <algorithm>
 
 using std::vector;
 using std::cout; using std::endl;
 
-BST::BST(vector<int> node_list) {
+BST::BST(vector<int> node_list, bool random) {
+    if(random) {
+        std::random_shuffle(node_list.begin(), node_list.end());
+    }
     for(auto node_val : node_list) {
         insert_node(node_val);
     }
@@ -140,10 +144,11 @@ void BST::delete_node(BSTNode *targetNode) {
     if(targetNode == nullptr)
         return;
     if(targetNode->left == nullptr)
-        transplant(targetNode, targetNode->right);
+        transplant(targetNode, targetNode->right); // also deals with two null children
     else if(targetNode->right == nullptr)
         transplant(targetNode, targetNode->left);
     else {
+        // successor takes its place
         BSTNode *succ = minimum(targetNode->right);
         if(succ != targetNode->right) {
             transplant(succ, succ->right);

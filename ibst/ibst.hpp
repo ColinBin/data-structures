@@ -29,14 +29,15 @@ struct BSTNode {
 class BST {
 public:
     BST() : root(nullptr) {  }
-    BST(std::vector<int> node_list);
+    // parameter random denotes whether to shuffle the input before BST is constructed
+    BST(std::vector<int> node_list, bool random = false);
     ~BST();
     bool empty() { return root == nullptr; }
     BSTNode *search(int target);
     BSTNode *successor(BSTNode *curr);
     BSTNode *predecessor(BSTNode *curr);
-    BSTNode *minimum(BSTNode *curr);
-    BSTNode *maximum(BSTNode *curr);
+    BSTNode *minimum(BSTNode *curr);    // TODO make curr default to root
+    BSTNode *maximum(BSTNode *curr);    // TODO make curr default to root
     void inorder_tree_walk();
     void preorder_tree_walk();
     void postorder_tree_walk(); 
