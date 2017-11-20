@@ -15,7 +15,7 @@ using std::vector;
 
 int main(int argc, const char * argv[]) {
     vector<int> node_list = {15, 6, 18, 3, 7, 17, 20, 2, 4, 13, 9};
-    BST bst(node_list, true);
-    bst.inorder_tree_walk();
+    BST bst(node_list);
+    bst.inorder_traversal_stack();
     return 0;
 }

@@ -47,6 +47,7 @@ private:
     void right_rotate(RBTNode *curr);
     void transplant(RBTNode *u, RBTNode *v);
     void insert_fixup(RBTNode *curr);
+    void delete_fixup(RBTNode *curr);
     
     void inorder_tree_walk_helper(RBTNode *curr);
     void destruct_helper(RBTNode *curr);

@@ -33,7 +33,7 @@ public:
     dbListNode *search(int k);
     void delete_node(dbListNode *target);
 private:
-    dbListNode *pivot;
+    dbListNode *pivot;  // pivot does not store actual data the real head starts at pivot->next
 };
 
 #endif /* dblist_hpp */

@@ -8,8 +8,9 @@
 
 #include "ibst.hpp"
 #include <algorithm>
+#include <stack>
 
-using std::vector;
+using std::vector; using std::stack;
 using std::cout; using std::endl;
 
 BST::BST(vector<int> node_list, bool random) {
@@ -56,36 +57,102 @@ void BST::insert_node(int value) {
         }
     }
 }
-void BST::inorder_tree_walk() {
-    inorder_tree_walk_helper(root);
+void BST::inorder_traversal_morris() {
+    BSTNode *current = root;
+    while(current != nullptr) {
+        // when current has no left child, visited current and switch to right child
+        if(current->left  == nullptr) {
+            cout << current->val << " ";
+            current = current->right;
+        } else {
+            // when left child is no nullptr, find predecessor
+            BSTNode *predec = current->left;
+            while(predec->right != current && predec->right != nullptr)
+                predec = predec->right;
+            // the left subtree of current has not been visited
+            if(predec->right == nullptr) {
+                predec->right = current;
+                current = current->left;
+            } else {
+                // left subtree has been visited, reset pointer and visit current
+                predec->right = nullptr;
+                cout << current->val << " ";
+                current = current->right;
+            }
+        }
+    }
     cout << endl;
 }
-void BST::inorder_tree_walk_helper(BSTNode *curr) {
+
+void BST::inorder_traversal_recursive() {
+    inorder_traversal_recursive_helper(root);
+    cout << endl;
+}
+void BST::inorder_traversal_recursive_helper(BSTNode *curr) {
     if(curr != nullptr) {
-        inorder_tree_walk_helper(curr->left);
+        inorder_traversal_recursive_helper(curr->left);
         cout << curr->val << " ";
-        inorder_tree_walk_helper(curr->right);
+        inorder_traversal_recursive_helper(curr->right);
     }
 }
-void BST::preorder_tree_walk() {
-    preorder_tree_walk_helper(root);
+
+void BST::inorder_traversal_stack() {
+    BSTNode *current = root;
+    stack<BSTNode *> stk;
+    while(!stk.empty() || current != nullptr) {
+        while(current != nullptr) {
+            stk.push(current);
+            current = current->left;
+        }
+        current = stk.top();
+        stk.pop();
+        cout << current->val << " ";
+        current = current->right;
+    }
     cout << endl;
 }
-void BST::preorder_tree_walk_helper(BSTNode *curr) {
+void BST::preorder_traversal_morris() {
+    BSTNode *current = root;
+    while(current != nullptr) {
+        if(current->left == nullptr) {
+            cout << current->val << " ";
+            current = current->right;
+        } else {
+            BSTNode *predec = current->left;
+            while(predec->right != nullptr && predec->right != current)
+                predec = predec->right;
+            if(predec->right == nullptr) {
+                cout << current->val << " ";
+                predec->right = current;
+                current = current->left;
+            } else {
+                predec->right = nullptr;
+                current = current->right;
+            }
+        }
+    }
+    cout << endl;
+}
+
+void BST::preorder_traversal_recursive() {
+    preorder_traversal_recursive_helper(root);
+    cout << endl;
+}
+void BST::preorder_traversal_recursive_helper(BSTNode *curr) {
     if(curr != nullptr) {
         cout << curr->val << " ";
-        preorder_tree_walk_helper(curr->left);
-        preorder_tree_walk_helper(curr->right);
+        preorder_traversal_recursive_helper(curr->left);
+        preorder_traversal_recursive_helper(curr->right);
     }
 }
-void BST::postorder_tree_walk() {
-    postorder_tree_walk_helper(root);
+void BST::postorder_traversal_recursive() {
+    postorder_traversal_recursive_helper(root);
     cout << endl;
 }
-void BST::postorder_tree_walk_helper(BSTNode *curr) {
+void BST::postorder_traversal_recursive_helper(BSTNode *curr) {
     if(curr != nullptr) {
-        postorder_tree_walk_helper(curr->left);
-        postorder_tree_walk_helper(curr->right);
+        postorder_traversal_recursive_helper(curr->left);
+        postorder_traversal_recursive_helper(curr->right);
         cout << curr->val << " ";
     }
 }

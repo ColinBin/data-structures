@@ -55,6 +55,11 @@ void RBT::insert_node(int val) {
         p->right = newNode;
     insert_fixup(newNode);
 }
+
+/*
+ three cases to consider until there is no such a red node whose parent is red
+ when it is case 1, the "redness" moves up 2 levels, case 2 and case 3 are terminating cases. Time complexity is O(h) = O(logn)
+ */
 void RBT::insert_fixup(RBTNode *curr) {
     // curr->color is Red, loop only if its parent is also red
     // if the while loop is entered, curr's grandparent must be exist and is black
@@ -99,6 +104,131 @@ void RBT::insert_fixup(RBTNode *curr) {
     // when loop terminates, curr may be root, change to black
     root->color = 'B';
 }
+
+/*
+ The originalColor tracks the color of deleted node (when it has fewer than two children) or the color of successor (when the deleted node has two children).
+ When this color is red, properties are not violated, otherwise do fixup
+ Although the node is deleted, the blackness is preserved with toBeInspected. So toBeInspected could be red-and-black or double-black. fixup just either pushes this extra blackness upwards or resolves the blackness in the subtree when possible.
+ */
+
+void RBT::delete_node(RBTNode *targetNode) {
+    char originalColor = targetNode->color;
+    RBTNode *toBeInspected = root;
+    if(targetNode->left == nil) {
+        toBeInspected = targetNode->right;
+        transplant(targetNode, targetNode->right);
+    } else if(targetNode->right == nil) {
+        toBeInspected = targetNode->left;
+        transplant(targetNode, targetNode->left);
+    } else {
+        RBTNode *theSuccessor = successor(targetNode);
+        originalColor = theSuccessor->color;
+        toBeInspected = theSuccessor->right;
+        if(theSuccessor->parent == targetNode)
+            // is this redundant?
+            toBeInspected->parent = theSuccessor;
+        else {
+            theSuccessor->right = targetNode->right;
+            theSuccessor->right->parent = theSuccessor;
+            transplant(theSuccessor, toBeInspected);
+        }
+        transplant(targetNode, theSuccessor);
+        theSuccessor->left = targetNode->left;
+        theSuccessor->left->parent = theSuccessor;
+        theSuccessor->color = targetNode->color;
+    }
+    delete targetNode;
+    // if the color of the deleted or moved node is red, red black properties are preserved
+    if(originalColor == 'B') {
+        delete_fixup(toBeInspected);
+    }
+}
+/*
+ The curr node has extra "blackness" that belongs to the deleted node.
+ The idea is first make sure sibling is black, when its children are both black, the extra "blackness" is pass up to the parent; whenever one children of sibling is red, we do rotate and recolor to distribute this extra "blackness" among the subtree denoted by curr->parent without violating red black property
+ */
+void RBT::delete_fixup(RBTNode *curr) {
+    while(curr != root && curr->color == 'B') {
+        if(curr == curr->parent->left) {
+            RBTNode *sibling = curr->parent->right;
+            // case 1, the sibling has color red, recolor and rotate to make sibling color black
+            if(sibling->color == 'R') {
+                sibling->color = 'B';
+                curr->parent->color = 'R';
+                left_rotate(curr->parent);
+                sibling = curr->parent->right;
+            }
+            // case 2-4 sibling has color black
+            // case 2 two children are black, pass the extra black to the parent
+            if(sibling->left->color == 'B' && sibling->right->color == 'B') {
+                sibling->color = 'R';
+                curr = curr->parent;
+            } else {
+                // case 3 and 4 are terminating cases
+                // case 3 the sibling has a red left child, move the "redness" to the right of sibiling, transfer to case 4
+                if(sibling->right->color == 'B') {
+                    sibling->color = 'R';
+                    sibling->left->color = 'B';
+                    right_rotate(sibling);
+                    sibling = curr->parent->right;
+                }
+                // case 4
+                sibling->color = curr->parent->color;
+                curr->parent->color = 'B';
+                sibling->right->color = 'B';
+                left_rotate(curr->parent);
+                curr = root;
+            }
+        } else {
+            RBTNode *sibling = curr->parent->left;
+            // case 1, the sibling has color red, recolor and rotate to make sibling color black
+            if(sibling->color == 'R') {
+                sibling->color = 'B';
+                curr->parent->color = 'R';
+                right_rotate(curr->parent);
+                sibling = curr->parent->left;
+            }
+            // case 2-4 sibling has color black
+            // case 2 two children are black, pass the extra black to the parent
+            if(sibling->left->color == 'B' && sibling->right->color == 'B') {
+                sibling->color = 'R';
+                curr = curr->parent;
+            } else {
+                // case 3 and 4 are terminating cases
+                // case 3 the sibling has a red right child, move the "redness" to the left of sibiling, transfer to case 4
+                if(sibling->left->color == 'B') {
+                    sibling->color = 'R';
+                    sibling->right->color = 'B';
+                    left_rotate(sibling);
+                    sibling = curr->parent->left;
+                }
+                // case 4
+                sibling->color = curr->parent->color;
+                curr->parent->color = 'B';
+                sibling->left->color = 'B';
+                right_rotate(curr->parent);
+                curr = root;
+            }
+        }
+    }
+    // when case 2 (when black is passed to the parent and the parent is red) or case 4 (when curr is set to root to jump out of the loop)
+    curr->color = 'B';
+}
+/*
+ set u's parent as v's parent, and v as u's parent's child
+ */
+void RBT::transplant(RBTNode *u, RBTNode *v) {
+    if(u == root)
+        root = v;
+    else {
+        if(u == u->parent->left)
+            u->parent->left = v;
+        else
+            u->parent->right = v;
+    }
+    v->parent = u->parent;
+}
+
 void RBT::left_rotate(RBTNode *curr) {
     RBTNode *rightChild = curr->right;
     curr->right = rightChild->left;
@@ -150,7 +280,7 @@ void RBT::inorder_tree_walk() {
 void RBT::inorder_tree_walk_helper(RBTNode *curr) {
     if(curr != nil) {
         inorder_tree_walk_helper(curr->left);
-        cout << curr->value << " ";
+        cout << curr->value << " " << curr->color << " ";
         inorder_tree_walk_helper(curr->right);
     }
 }

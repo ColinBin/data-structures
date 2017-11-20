@@ -24,7 +24,11 @@ struct BSTNode {
 };
 
 /*
- @brief: binary search tree
+ Binary search tree class
+ 
+ Traversal:
+ for inorder traversal the root is visited twice, once when root is first reached, once when the left subtree has been visited, so it is critical to identify these two cases, otherwise infinite loop may occur. When using stack, when a node is poped out of the stack, its left subtree has been visited; When using morris, if the predecessor points to the current root, left subtree of current root has been visited.
+
  */
 class BST {
 public:
@@ -38,15 +42,23 @@ public:
     BSTNode *predecessor(BSTNode *curr);
     BSTNode *minimum(BSTNode *curr);    // TODO make curr default to root
     BSTNode *maximum(BSTNode *curr);    // TODO make curr default to root
-    void inorder_tree_walk();
-    void preorder_tree_walk();
-    void postorder_tree_walk(); 
+    
+    // recursive traversal
+    void inorder_traversal_recursive();
+    void preorder_traversal_recursive();
+    void postorder_traversal_recursive();
+    // morris is applicable when the tree is not read only, time is O(n) since each node is visited at most twice (three times?), space is O(1)
+    void inorder_traversal_morris();
+    void preorder_traversal_morris();
+    // using stack time O(n) space O(h) worse case O(n)
+    void inorder_traversal_stack();
+
     void insert_node(int value);
     void delete_node(BSTNode *targetNode);
 private:
-    void inorder_tree_walk_helper(BSTNode *curr);
-    void preorder_tree_walk_helper(BSTNode *curr);
-    void postorder_tree_walk_helper(BSTNode *curr);
+    void inorder_traversal_recursive_helper(BSTNode *curr);
+    void preorder_traversal_recursive_helper(BSTNode *curr);
+    void postorder_traversal_recursive_helper(BSTNode *curr);
     void transplant(BSTNode *u, BSTNode *v);
     void destruct_helper(BSTNode *curr);
     BSTNode *root;
