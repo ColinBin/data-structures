@@ -52,6 +52,8 @@ public:
     void preorder_traversal_morris();
     // using stack time O(n) space O(h) worse case O(n)
     void inorder_traversal_stack();
+    void postorder_traversal_two_stacks();
+    void postorder_traversal_one_stack();
 
     void insert_node(int value);
     void delete_node(BSTNode *targetNode);

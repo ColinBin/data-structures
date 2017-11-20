@@ -145,6 +145,56 @@ void BST::preorder_traversal_recursive_helper(BSTNode *curr) {
         preorder_traversal_recursive_helper(curr->right);
     }
 }
+
+// the result will be in stk2, which takes theta(n) space
+void BST::postorder_traversal_two_stacks() {
+    if(empty())
+        return;
+    stack<BSTNode *> stk1, stk2;
+    stk1.push(root);
+    while(!stk1.empty()) {
+        BSTNode *curr = stk1.top();
+        stk1.pop();
+        stk2.push(curr);
+        if(curr->left != nullptr)
+            stk1.push(curr->left);
+        if(curr->right != nullptr) {
+            stk1.push(curr->right);
+        }
+    }
+    while(!stk2.empty()) {
+        cout << stk2.top()->val << " ";
+        stk2.pop();
+    }
+    cout << endl;
+}
+// can also used to find the maximum height of a binary tree
+void BST::postorder_traversal_one_stack() {
+    stack<BSTNode *> stk;
+    BSTNode *current = root;
+    while(!stk.empty() || current != nullptr) {
+        if(current != nullptr) {
+            stk.push(current);
+            current = current->left;
+        } else {
+            BSTNode *temp = stk.top()->right;
+            if(temp != nullptr)
+                current = temp;
+            else {
+                temp = stk.top();
+                stk.pop();
+                cout << temp->val << " ";
+                while(!stk.empty() && temp == stk.top()->right) {
+                    temp = stk.top();
+                    stk.pop();
+                    cout << temp->val << " ";
+                }
+            }
+        }
+    }
+    cout << endl;
+}
+
 void BST::postorder_traversal_recursive() {
     postorder_traversal_recursive_helper(root);
     cout << endl;
