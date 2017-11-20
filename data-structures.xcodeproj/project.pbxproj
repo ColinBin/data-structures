@@ -101,6 +101,7 @@
 		3BF337861FAFED1D0082C8E7 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		3BF3378C1FAFED690082C8E7 /* ibst.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ibst.cpp; sourceTree = "<group>"; };
 		3BF3378D1FAFED690082C8E7 /* ibst.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ibst.hpp; sourceTree = "<group>"; };
+		3BFBFED31FC354B600DF584D /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -162,6 +163,7 @@
 		3BAEE7DF1F7C5848005B0A8D = {
 			isa = PBXGroup;
 			children = (
+				3BFBFED31FC354B600DF584D /* README.md */,
 				3BAEE7F71F7C585B005B0A8D /* istack */,
 				3BE7ADE81F7C5E4B00D41263 /* iqueue */,
 				3BE7ADF61F7C637E00D41263 /* slist */,
