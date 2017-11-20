@@ -13,7 +13,7 @@
 #include <vector>
 
 /*
- @brief: TreeNode for Binary Search Tree
+ TreeNode for Binary Search Tree
  */
 struct BSTNode {
     int val;        // value
@@ -51,6 +51,7 @@ public:
     void inorder_traversal_morris();
     void preorder_traversal_morris();
     // using stack time O(n) space O(h) worse case O(n)
+    void preorder_traversal_stack();
     void inorder_traversal_stack();
     void postorder_traversal_two_stacks();
     void postorder_traversal_one_stack();
@@ -58,11 +59,12 @@ public:
     void insert_node(int value);
     void delete_node(BSTNode *targetNode);
 private:
-    void inorder_traversal_recursive_helper(BSTNode *curr);
-    void preorder_traversal_recursive_helper(BSTNode *curr);
-    void postorder_traversal_recursive_helper(BSTNode *curr);
+    void inorder_traversal_recursive_helper(BSTNode *curr, std::vector<BSTNode *> &res);
+    void preorder_traversal_recursive_helper(BSTNode *curr, std::vector<BSTNode *> &res);
+    void postorder_traversal_recursive_helper(BSTNode *curr, std::vector<BSTNode *> &res);
     void transplant(BSTNode *u, BSTNode *v);
     void destruct_helper(BSTNode *curr);
+    void print_traversal_result(std::vector<BSTNode *> res);
     BSTNode *root;
 };
 

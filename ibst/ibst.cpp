@@ -58,11 +58,12 @@ void BST::insert_node(int value) {
     }
 }
 void BST::inorder_traversal_morris() {
+    vector<BSTNode *> res;
     BSTNode *current = root;
     while(current != nullptr) {
         // when current has no left child, visited current and switch to right child
         if(current->left  == nullptr) {
-            cout << current->val << " ";
+            res.push_back(current);
             current = current->right;
         } else {
             // when left child is no nullptr, find predecessor
@@ -76,27 +77,29 @@ void BST::inorder_traversal_morris() {
             } else {
                 // left subtree has been visited, reset pointer and visit current
                 predec->right = nullptr;
-                cout << current->val << " ";
+                res.push_back(current);
                 current = current->right;
             }
         }
     }
-    cout << endl;
+    print_traversal_result(res);
 }
 
 void BST::inorder_traversal_recursive() {
-    inorder_traversal_recursive_helper(root);
-    cout << endl;
+    vector<BSTNode *> res;
+    inorder_traversal_recursive_helper(root, res);
+    print_traversal_result(res);
 }
-void BST::inorder_traversal_recursive_helper(BSTNode *curr) {
+void BST::inorder_traversal_recursive_helper(BSTNode *curr, vector<BSTNode *> &res) {
     if(curr != nullptr) {
-        inorder_traversal_recursive_helper(curr->left);
-        cout << curr->val << " ";
-        inorder_traversal_recursive_helper(curr->right);
+        inorder_traversal_recursive_helper(curr->left, res);
+        res.push_back(curr);
+        inorder_traversal_recursive_helper(curr->right, res);
     }
 }
 
 void BST::inorder_traversal_stack() {
+    vector<BSTNode *> res;
     BSTNode *current = root;
     stack<BSTNode *> stk;
     while(!stk.empty() || current != nullptr) {
@@ -106,23 +109,24 @@ void BST::inorder_traversal_stack() {
         }
         current = stk.top();
         stk.pop();
-        cout << current->val << " ";
+        res.push_back(current);
         current = current->right;
     }
-    cout << endl;
+    print_traversal_result(res);
 }
 void BST::preorder_traversal_morris() {
+    vector<BSTNode *> res;
     BSTNode *current = root;
     while(current != nullptr) {
         if(current->left == nullptr) {
-            cout << current->val << " ";
+            res.push_back(current);
             current = current->right;
         } else {
             BSTNode *predec = current->left;
             while(predec->right != nullptr && predec->right != current)
                 predec = predec->right;
             if(predec->right == nullptr) {
-                cout << current->val << " ";
+                res.push_back(current);
                 predec->right = current;
                 current = current->left;
             } else {
@@ -131,23 +135,43 @@ void BST::preorder_traversal_morris() {
             }
         }
     }
-    cout << endl;
+    print_traversal_result(res);
+}
+// very similar to the stack structure in recursive algorithm
+void BST::preorder_traversal_stack() {
+    vector<BSTNode *> res;
+    if(root == nullptr)
+        return;
+    stack<BSTNode *> stk;
+    stk.push(root);
+    while(!stk.empty()) {
+        BSTNode *current = stk.top();
+        stk.pop();
+        res.push_back(current);
+        if(current->right != nullptr)
+            stk.push(current->right);
+        if(current->left != nullptr)
+            stk.push(current->left);
+    }
+    print_traversal_result(res);
 }
 
 void BST::preorder_traversal_recursive() {
-    preorder_traversal_recursive_helper(root);
-    cout << endl;
+    vector<BSTNode *> res;
+    preorder_traversal_recursive_helper(root, res);
+    print_traversal_result(res);
 }
-void BST::preorder_traversal_recursive_helper(BSTNode *curr) {
+void BST::preorder_traversal_recursive_helper(BSTNode *curr, vector<BSTNode *> &res) {
     if(curr != nullptr) {
-        cout << curr->val << " ";
-        preorder_traversal_recursive_helper(curr->left);
-        preorder_traversal_recursive_helper(curr->right);
+        res.push_back(curr);
+        preorder_traversal_recursive_helper(curr->left, res);
+        preorder_traversal_recursive_helper(curr->right, res);
     }
 }
 
 // the result will be in stk2, which takes theta(n) space
 void BST::postorder_traversal_two_stacks() {
+    vector<BSTNode *> res;
     if(empty())
         return;
     stack<BSTNode *> stk1, stk2;
@@ -163,13 +187,15 @@ void BST::postorder_traversal_two_stacks() {
         }
     }
     while(!stk2.empty()) {
-        cout << stk2.top()->val << " ";
+        res.push_back(stk2.top());
         stk2.pop();
     }
-    cout << endl;
+    print_traversal_result(res);
 }
+
 // can also used to find the maximum height of a binary tree
 void BST::postorder_traversal_one_stack() {
+    vector<BSTNode *> res;
     stack<BSTNode *> stk;
     BSTNode *current = root;
     while(!stk.empty() || current != nullptr) {
@@ -183,27 +209,28 @@ void BST::postorder_traversal_one_stack() {
             else {
                 temp = stk.top();
                 stk.pop();
-                cout << temp->val << " ";
+                res.push_back(temp);
                 while(!stk.empty() && temp == stk.top()->right) {
                     temp = stk.top();
                     stk.pop();
-                    cout << temp->val << " ";
+                    res.push_back(temp);
                 }
             }
         }
     }
-    cout << endl;
+    print_traversal_result(res);
 }
 
 void BST::postorder_traversal_recursive() {
-    postorder_traversal_recursive_helper(root);
-    cout << endl;
+    vector<BSTNode *> res;
+    postorder_traversal_recursive_helper(root, res);
+    print_traversal_result(res);
 }
-void BST::postorder_traversal_recursive_helper(BSTNode *curr) {
+void BST::postorder_traversal_recursive_helper(BSTNode *curr, vector<BSTNode *> &res) {
     if(curr != nullptr) {
-        postorder_traversal_recursive_helper(curr->left);
-        postorder_traversal_recursive_helper(curr->right);
-        cout << curr->val << " ";
+        postorder_traversal_recursive_helper(curr->left, res);
+        postorder_traversal_recursive_helper(curr->right, res);
+        res.push_back(curr);
     }
 }
 BSTNode *BST::minimum(BSTNode *curr) {
@@ -291,4 +318,11 @@ void BST::transplant(BSTNode *u, BSTNode *v) {
     }
     if(v != nullptr)
         v->p = u->p;
+}
+
+void BST::print_traversal_result(const vector<BSTNode *> res) {
+    for(const BSTNode *curr : res) {
+        cout << curr->val << " ";
+    }
+    cout << endl;
 }
